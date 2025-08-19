@@ -213,7 +213,7 @@ class TranslationApp:
             
             # Examples
             examples = [
-                ["Tell me how to get to Qualcomm Party Tonight at Museum of Pop?", "Spanish", True],
+                ["Tell me how to get to Qualcomm Party Tonight at Mind the Bridge, San Francisco?", "Spanish", True],
                 ["I love programming with AI models.", "French", True],
                 ["The weather is beautiful today.", "Japanese", True],
                 ["Could you help me find the nearest restaurant?", "German", True]
