@@ -1,20 +1,30 @@
-# Simple Python example using OpenAI API
-from openai import OpenAI
+import openai
+from foundry_local import FoundryLocalManager
 
-# Configure the client to use your local endpoint
-client = OpenAI(
-    base_url="http://localhost:5272/V1",
-    api_key="not-needed"  # API key isn't used but the client requires one
+# By using an alias, the most suitable model will be downloaded 
+# to your end-user's device.
+alias = "deepseek-r1-7b"
+
+# Create a FoundryLocalManager instance. This will start the Foundry 
+# Local service if it is not already running and load the specified model.
+manager = FoundryLocalManager(alias)
+
+# The remaining code us es the OpenAI Python SDK to interact with the local model.
+
+# Configure the client to use the local Foundry service
+client = openai.OpenAI(
+    base_url=manager.endpoint,
+    api_key=manager.api_key  # API key is not required for local usage
 )
 
-# Chat completion example
-response = client.chat.completions.create(
-    model="deepseek-r1-distill-qwen-7b-qnn-npu",  # Use the id of your loaded model, found in 'foundry service ps'
-    messages=[
-        {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": "What is the capital of France?"}
-    ],
-    max_tokens=1000
+# Set the model to use and generate a streaming response
+stream = client.chat.completions.create(
+    model=manager.get_model_info(alias).id,
+    messages=[{"role": "user", "content": "What is the golden ratio?"}],
+    stream=True
 )
 
-print(response.choices[0].message.content)
+# Print the streaming response
+for chunk in stream:
+    if chunk.choices[0].delta.content is not None:
+        print(chunk.choices[0].delta.content, end="", flush=True)
